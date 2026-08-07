@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Book System - Admin Console</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar" id="navbar"></nav>
+
+  <main class="container">
+    <div id="alertContainer"></div>
+
+    <!-- Admin Header -->
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title">🛠️ Admin Console</h1>
+      </div>
+      <p style="color: var(--text-light);">Manage books, stock, and user borrow records.</p>
+    </div>
+
+    <!-- Books Management -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">📚 Manage Books</h2>
+        <button class="btn btn-primary" onclick="openAddBookModal()">+ Add Book</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="table" id="booksTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th>ISBN</th>
+              <th>Total Qty</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="booksTableBody">
+            <tr>
+              <td colspan="6" class="loading">Loading books...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">👥 Manage Users</h2>
+        <button class="btn btn-primary" onclick="openAddUserModal()">+ Add User</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="table" id="usersTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Member Since</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr>
+              <td colspan="5" class="loading">Loading users...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Borrow Records Management -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">📋 All Borrow Records</h2>
+        <span id="allRecordsCount" class="text-muted"></span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="table" id="recordsTable">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Book</th>
+              <th>Status</th>
+              <th>Borrow Date</th>
+              <th>Return Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recordsTableBody">
+            <tr>
+              <td colspan="6" class="loading">Loading records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add User Modal -->
+  <div class="modal-overlay" id="userModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add User</h3>
+        <button class="modal-close" onclick="closeUserModal()">&times;</button>
+      </div>
+      <form id="userForm" onsubmit="handleUserSubmit(event)">
+        <div class="form-group">
+          <label for="userName">Name</label>
+          <input type="text" id="userName" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="userEmail">Email</label>
+          <input type="email" id="userEmail" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="userPassword">Password</label>
+          <input type="password" id="userPassword" class="form-control" minlength="6" required>
+        </div>
+        <div class="form-group">
+          <label for="userRole">Role</label>
+          <select id="userRole" class="form-control">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" onclick="closeUserModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add/Edit Book Modal -->
+  <div class="modal-overlay" id="bookModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="bookModalTitle">Add Book</h3>
+        <button class="modal-close" onclick="closeBookModal()">&times;</button>
+      </div>
+      <form id="bookForm" onsubmit="handleBookSubmit(event)">
+        <input type="hidden" id="bookFormId">
+        <div class="form-group">
+          <label for="bookTitle">Title</label>
+          <input type="text" id="bookTitle" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="bookAuthor">Author</label>
+          <input type="text" id="bookAuthor" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="bookIsbn">ISBN</label>
+          <input type="text" id="bookIsbn" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="bookTotalQty">Total Quantity</label>
+          <input type="number" id="bookTotalQty" class="form-control" min="1" required>
+        </div>
+        <div class="form-group" id="stockOverrideGroup" style="display: none;">
+          <label for="bookStock">Stock (override)</label>
+          <input type="number" id="bookStock" class="form-control" min="0">
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" onclick="closeBookModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="bookSubmitBtn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Smart Book System &copy; 2026</p>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

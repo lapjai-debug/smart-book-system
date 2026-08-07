@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Environment variables (sensitive - never commit)
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+
+# Build output
+dist/
+build/
+
+# Database backups
+backups/

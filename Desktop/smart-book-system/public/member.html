@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Book System - My Account</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar" id="navbar"></nav>
+
+  <main class="container">
+    <div id="alertContainer"></div>
+
+    <!-- User Profile -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">👤 My Profile</h2>
+      </div>
+      <div id="profileInfo">
+        <div class="loading">Loading profile...</div>
+      </div>
+    </div>
+
+    <!-- Wishlist (Interested) -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">❤️ My Wishlist</h2>
+        <span id="wishlistCount" class="text-muted"></span>
+      </div>
+      <div id="wishlistRecords">
+        <div class="loading">Loading wishlist...</div>
+      </div>
+    </div>
+
+    <!-- Current Borrow Records -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">📋 My Borrow Records</h2>
+        <span id="recordsCount" class="text-muted"></span>
+      </div>
+      <div id="borrowRecords">
+        <div class="loading">Loading records...</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Smart Book System &copy; 2026</p>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/borrow.js"></script>
+</body>
+</html>
