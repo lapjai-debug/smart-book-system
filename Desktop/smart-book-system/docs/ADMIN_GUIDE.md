@@ -231,15 +231,52 @@ git push origin main
 
 ## 5. Option C: Deploy with Vercel (Free)
 
-Vercel is great for frontend but Node.js Express apps need the **serverless** model. This works for demo purposes:
+Vercel is great for frontend but Node.js Express apps need the **serverless** model. This project is already configured for Vercel:
+
+- `api/index.js` — Serverless entry point that connects to MongoDB on each invocation
+- `vercel.json` — Routes `/api/*` to the serverless function and serves `public/` as static files
+- `config/db.js` — Caches the MongoDB connection globally (serverless-friendly)
+
+### Deploy Steps
 
 1. Go to https://vercel.com/ → Sign up with GitHub
 2. Click **New Project** → Import `smart-book-system`
-3. Vercel detects it's a Node.js app
-4. Set environment variables (same as Render)
+3. Vercel detects the `vercel.json` config
+4. Set environment variables (same as Render):
+   - `MONGO_URI` = your Atlas connection string
+   - `JWT_SECRET` = a long random string
+   - `JWT_EXPIRES_IN` = `30d`
 5. Deploy
 
-> ⚠️ Vercel serverless functions have a **10-second timeout**, which might cause slow MongoDB operations to fail. Use with caution.
+### ⚠️ CRITICAL: Why Vercel Cannot Connect to MongoDB Atlas
+
+**Compass works but Vercel doesn't** because of the **Atlas IP whitelist**:
+
+- **MongoDB Compass** connects from **your home/local IP** — which you whitelisted
+- **Vercel** connects from **Vercel's cloud servers** — which have **different IPs** that are NOT whitelisted
+
+**Fix — Allow access from anywhere:**
+
+1. Log in to https://cloud.mongodb.com/
+2. Click your cluster → **Network Access** tab
+3. Click **+ Add IP Address**
+4. Select **Allow access from anywhere** (`0.0.0.0/0`)
+5. Click **Confirm**
+
+This is required for ANY cloud host (Vercel, Render, Railway) because their server IPs change dynamically.
+
+> ⚠️ **Security note:** `0.0.0.0/0` means anyone with the connection string can access the database. For a school project this is acceptable. For production, use Vercel's published IP ranges instead: https://vercel.com/docs/security/encryption#ip-restriction
+
+### Vercel Troubleshooting
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| `Could not connect to any servers in your MongoDB Atlas cluster` | Vercel IP not whitelisted | Add `0.0.0.0/0` in Atlas Network Access |
+| `Database connection failed. Check Atlas IP whitelist.` (503) | Same as above | Same fix |
+| API returns 504 timeout | Vercel serverless 10s limit + slow cold start | First request after idle is slow; subsequent requests are fast. Use Render instead if this is a problem |
+| Static pages load but API fails | Environment variables not set | Add `MONGO_URI` and `JWT_SECRET` in Vercel Project Settings → Environment Variables |
+
+> ⚠️ Vercel serverless functions have a **10-second timeout**, which might cause slow MongoDB operations to fail. Use with caution. For a more reliable free host, prefer **Render** (Option A).
 
 ---
 
