@@ -160,7 +160,7 @@ Once the admin has created the GitHub repository:
 git clone https://github.com/<your-org>/smart-book-system.git
 
 # Move into the project folder
-cd smart-book-system
+cd smart-book-system\Desktop\smart-book-system
 
 # Install dependencies
 npm install
