@@ -434,7 +434,7 @@ changePassword(data) {
 - ✅ How the reader endpoint checks if the user has borrowed the book
 
 **What you could add/modify (examples):**
-- Search/filter books by title or author — add `?search=` query param
+- ✅ Search/filter books by title or author — implemented via `GET /api/books/search?q=`
 - Sort books by title, author, stock
 - Book categories/genres
 - Upload a book cover image
@@ -442,26 +442,25 @@ changePassword(data) {
 - **Review:** Ensure ISBN uniqueness is checked on both create AND update
 - **Review:** Ensure stock cannot go negative
 
-**Example — Add Search by Title:**
+**Implemented — Search by Title/Author:**
 
-In `bookController.js`, modify `getBooks`:
+In `controllers/bookController.js`, `searchBooks` uses a case-insensitive regex on `title` and `author`:
+
 ```js
-const getBooks = async (req, res, next) => {
+const searchBooks = async (req, res, next) => {
   try {
-    const { search } = req.query;
-    let query = {};
-
-    if (search) {
-      query = {
-        $or: [
-          { title: { $regex: search, $options: 'i' } },
-          { author: { $regex: search, $options: 'i' } },
-          { isbn: { $regex: search, $options: 'i' } },
-        ],
-      };
+    const { q } = req.query;
+    if (!q) {
+      return res.json({ success: true, count: 0, books: [] });
     }
 
-    const books = await Book.find(query).sort({ createdAt: -1 });
+    const books = await Book.find({
+      $or: [
+        { title: { $regex: q, $options: 'i' } },
+        { author: { $regex: q, $options: 'i' } },
+      ],
+    }).sort({ createdAt: -1 });
+
     res.json({ success: true, count: books.length, books });
   } catch (error) {
     next(error);
@@ -469,22 +468,23 @@ const getBooks = async (req, res, next) => {
 };
 ```
 
-In `public/js/books.js`, add a search event listener:
-```js
-// Add a search input to index.html
-// <input type="text" id="searchInput" placeholder="Search books..." class="form-control">
+In `routes/bookRoutes.js`:
 
-document.getElementById('searchInput').addEventListener('input', debounce(async (e) => {
-  const search = e.target.value.trim();
-  const data = await API.getBooks(search);
-  document.getElementById('bookGrid').innerHTML = data.books.map(renderBookCard).join('');
-}, 300));
+```js
+router.get('/search', searchBooks);
 ```
 
-In `public/js/api.js`, update `getBooks`:
+In `public/js/books.js`, a debounced input listener calls `API.searchBooks()`:
+
 ```js
-getBooks(search = '') {
-  return this.request(`/books${search ? `?search=${encodeURIComponent(search)}` : ''}`);
+document.getElementById('searchInput').addEventListener('input', debounce(searchBooks, 300));
+```
+
+In `public/js/api.js`:
+
+```js
+searchBooks(query = '') {
+  return this.request(`/books/search?q=${encodeURIComponent(query)}`);
 },
 ```
 

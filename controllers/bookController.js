@@ -20,6 +20,31 @@ const getBooks = async (req, res, next) => {
 };
 
 /**
+ * @desc    Search books by title or author
+ * @route   GET /api/books/search
+ * @access  Public
+ */
+const searchBooks = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      return res.json({ success: true, count: 0, books: [] });
+    }
+
+    const books = await Book.find({
+      $or: [
+        { title: { $regex: q, $options: 'i' } },
+        { author: { $regex: q, $options: 'i' } },
+      ],
+    }).sort({ createdAt: -1 });
+
+    res.json({ success: true, count: books.length, books });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @desc    Get a single book by id
  * @route   GET /api/books/:id
  * @access  Public
@@ -194,6 +219,7 @@ const deleteBook = async (req, res, next) => {
 
 module.exports = {
   getBooks,
+  searchBooks,
   getBookById,
   createBook,
   updateBook,

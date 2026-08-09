@@ -516,6 +516,7 @@ Before going live, review these items:
 | POST | `/api/auth/login` | Public | Login, returns JWT |
 | GET | `/api/auth/me` | JWT | Get logged-in user's profile |
 | GET | `/api/books` | Public | List all books |
+| GET | `/api/books/search` | Public | Search books by title or author |
 | GET | `/api/books/:id` | Public | Get a single book |
 | GET | `/api/books/:id/read` | JWT + borrowed | Get book content to read |
 | POST | `/api/books` | Admin | Create a book |

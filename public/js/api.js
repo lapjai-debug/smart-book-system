@@ -135,6 +135,10 @@ const API = {
     return this.request('/books');
   },
 
+  searchBooks(query = '') {
+    return this.request(`/books/search?q=${encodeURIComponent(query)}`);
+  },
+
   getBook(id) {
     return this.request(`/books/${id}`);
   },

@@ -13,6 +13,7 @@ const { adminOnly } = require('../middleware/roleMiddleware');
 
 // Public routes
 router.get('/', getBooks);
+router.get('/search', searchBooks);
 router.get('/:id', getBookById);
 
 // Protected route - read book content (must have borrowed the book)

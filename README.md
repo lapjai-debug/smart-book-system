@@ -9,6 +9,7 @@ A full-stack library management system with JWT authentication, role-based acces
 - 🔐 **JWT Authentication** — Secure registration and login with bcrypt password hashing
 - 👑 **Role-Based Access Control** — Regular users vs. admin-only management routes
 - 📖 **Book Gallery** — Browse books with live stock availability tags
+- 🔍 **Book Search** — Filter books by title or author directly from the homepage
 - 📋 **Borrow State Machine** — `interested → pending → borrowed → returned` with stock validation
 - ❤️ **Wishlist** — Mark books as interested, then submit checkout requests
 - 📖 **Online Reader** — Read borrowed book content directly in the browser
@@ -131,6 +132,7 @@ smart-book-system/
 | POST | `/api/auth/login` | Public | Login, returns JWT |
 | GET | `/api/auth/me` | JWT | Get logged-in user's profile |
 | GET | `/api/books` | Public | List all books |
+| GET | `/api/books/search` | Public | Search books by title or author |
 | GET | `/api/books/:id` | Public | Get a single book |
 | GET | `/api/books/:id/read` | JWT + borrowed | Get book content to read |
 | POST | `/api/books` | Admin | Create a book |
@@ -161,6 +163,7 @@ smart-book-system/
 
 ## 🧑‍💻 Team Guides
 
+- **[New Team Member Onboarding Guide](docs/NEW_TEAM_MEMBER_GUIDE.md)** — Start from scratch: register on GitHub, create your project folder in VS Code, build the DB file, and push to the development branch
 - **[Team Member Guide](docs/TEAM_GUIDE.md)** — Setup VSCode, Node.js, MongoDB, Git workflow, and individual module code review assignments
 - **[Admin Guide](docs/ADMIN_GUIDE.md)** — Upload to GitHub, deploy for free (Render/Railway/Vercel/Oracle Cloud), backups, and security
 

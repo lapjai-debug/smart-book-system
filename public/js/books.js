@@ -4,6 +4,17 @@
  */
 
 /**
+ * Debounce helper to limit API calls while typing.
+ */
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+/**
  * Load all books and render them in the grid.
  */
 async function loadBooks() {
@@ -117,3 +128,44 @@ function escapeHtml(str) {
 
 // Load books on page load
 document.addEventListener('DOMContentLoaded', loadBooks);
+
+/**
+ * Search books by query string.
+ */
+async function searchBooks() {
+  const grid = document.getElementById('bookGrid');
+  const countEl = document.getElementById('bookCount');
+  const query = document.getElementById('searchInput').value.trim();
+
+  try {
+    const data = await API.searchBooks(query);
+    const books = data.books || [];
+
+    countEl.textContent = `${books.length} book${books.length !== 1 ? 's' : ''}`;
+
+    if (books.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          <div>🔍</div>
+          <p>No books found matching your search.</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = books.map(renderBookCard).join('');
+  } catch (error) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1;">
+        <div>⚠️</div>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+// Search input listener
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+  searchInput.addEventListener('input', debounce(searchBooks, 300));
+}
