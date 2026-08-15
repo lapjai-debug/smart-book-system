@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Book System — Technical Guide</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --secondary: #0ea5e9;
+    --success: #16a34a;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* ===== Cover Page ===== */
+  .cover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+    margin-bottom: 40px;
+    page-break-after: always;
+  }
+  .cover h1 {
+    font-size: 2.6em;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  .cover .subtitle {
+    font-size: 1.2em;
+    opacity: 0.95;
+    margin-bottom: 30px;
+  }
+  .cover .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin: 4px;
+  }
+  .cover .version {
+    margin-top: 30px;
+    font-size: 0.85em;
+    opacity: 0.8;
+  }
+
+  /* ===== Typography ===== */
+  h1 { font-size: 1.9em; margin: 30px 0 15px; color: var(--primary-dark); }
+  h2 { font-size: 1.5em; margin: 25px 0 12px; color: var(--primary-dark); border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 1.2em; margin: 20px 0 10px; color: var(--primary); }
+  p { margin: 10px 0; }
+  ul, ol { margin: 10px 0 10px 25px; }
+  li { margin: 5px 0; }
+  strong { color: var(--primary-dark); }
+
+  /* ===== Cards ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .card h3 { margin-top: 0; }
+
+  /* ===== Callouts ===== */
+  .callout {
+    border-left: 4px solid var(--primary);
+    background: #eff6ff;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+  }
+  .callout.warning {
+    border-left-color: var(--warning);
+    background: #fffbeb;
+  }
+  .callout.success {
+    border-left-color: var(--success);
+    background: #f0fdf4;
+  }
+  .callout.danger {
+    border-left-color: var(--danger);
+    background: #fef2f2;
+  }
+  .callout .label {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  /* ===== Code ===== */
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.5;
+    margin: 12px 0;
+  }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: #e2e8f0;
+    color: #0f172a;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* ===== Tables ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.9em;
+  }
+  th {
+    background: var(--primary);
+    color: white;
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 600;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) { background: #f1f5f9; }
+
+  /* ===== Tags / Badges ===== */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .tag.public { background: #e0f2fe; color: #0369a1; }
+  .tag.private { background: #fef3c7; color: #92400e; }
+  .tag.admin { background: #fee2e2; color: #991b1b; }
+  .tag.db { background: #dcfce7; color: #166534; }
+  .tag.mw { background: #ede9fe; color: #5b21b6; }
+
+  /* ===== Flow Diagram ===== */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f1f5f9;
+    border-radius: 12px;
+  }
+  .flow-step {
+    background: var(--card);
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: 600;
+    min-width: 100px;
+  }
+  .flow-step.mw { border-color: #7c3aed; background: #f5f3ff; }
+  .flow-step.db { border-color: var(--success); background: #f0fdf4; }
+  .flow-step.deny { border-color: var(--danger); background: #fef2f2; }
+  .flow-arrow {
+    font-size: 1.4em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  /* ===== State Machine ===== */
+  .state-machine {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f1f5f9;
+    border-radius: 12px;
+  }
+  .state {
+    background: var(--card);
+    border: 2px solid var(--secondary);
+    border-radius: 50%;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+  .state.initial { border-color: var(--warning); }
+  .state.final { border-color: var(--success); }
+  .state-arrow {
+    font-size: 1.2em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .state-label {
+    font-size: 0.7em;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  /* ===== Page breaks ===== */
+  .page-break { page-break-before: always; }
+
+  /* ===== Print ===== */
+  @media print {
+    body { padding: 0; background: white; }
+    .cover { border-radius: 0; }
+    .card, .callout { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <h1>📚 Smart Book System</h1>
+  <div class="subtitle">Technical Guide for Beginners</div>
+  <div>
+    <span class="badge">Node.js</span>
+    <span class="badge">Express</span>
+    <span class="badge">MongoDB</span>
+    <span class="badge">JWT Auth</span>
+  </div>
+  <div class="version">Version 1.0 &nbsp;|&nbsp; Beginner-Friendly Edition</div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<h1>Table of Contents</h1>
+<ol>
+  <li><a href="#overview">System Overview</a></li>
+  <li><a href="#architecture">Architecture & How Requests Flow</a></li>
+  <li><a href="#middleware">Understanding Middleware (protect & adminOnly)</a></li>
+  <li><a href="#database">The Three Database Collections</a></li>
+  <li><a href="#features">Every Feature — Step by Step</a></li>
+  <li><a href="#borrow-lifecycle">The Borrow Lifecycle (State Machine)</a></li>
+  <li><a href="#summary">Quick Reference Summary Table</a></li>
+  <li><a href="#glossary">Glossary of Terms</a></li>
+</ol>
+
+<!-- ==================== 1. OVERVIEW ==================== -->
+<div class="page-break"></div>
+<h1 id="overview">1. System Overview</h1>
+
+<p>The <strong>Smart Book System</strong> is a library management web application. It lets users browse books, express interest, request to borrow, and read books — while admins manage books, users, and borrow records.</p>
+
+<div class="card">
+  <h3>🎯 What this guide covers</h3>
+  <p>This guide explains, in plain language, <strong>what happens behind the scenes</strong> when a user or admin takes an action. For every feature you will see:</p>
+  <ul>
+    <li>✅ <strong>Who</strong> can perform the action (Public / Logged-in User / Admin)</li>
+    <li>✅ <strong>Which middleware</strong> runs (e.g. <code>protect</code>, <code>adminOnly</code>)</li>
+    <li>✅ <strong>What database action</strong> is triggered (e.g. create, find, update, delete)</li>
+  </ul>
+</div>
+
+<div class="callout">
+  <div class="label">💡 Key Idea</div>
+  <p>Think of the system as a <strong>restaurant</strong>: the <em>route</em> is the menu item, the <em>middleware</em> is the security guard checking your ID, and the <em>controller</em> is the chef who actually prepares the dish (talks to the database).</p>
+</div>
+
+<h2>Two Types of Users</h2>
+<table>
+  <tr><th>Role</th><th>What they can do</th></tr>
+  <tr>
+    <td><span class="tag public">USER</span></td>
+    <td>Register, login, browse books, search, express interest, request checkout, view own records, read borrowed books</td>
+  </tr>
+  <tr>
+    <td><span class="tag admin">ADMIN</span></td>
+    <td>Everything a user can do, <strong>plus</strong>: create/update/delete books, manage all users, view all borrow records, update any record status</td>
+  </tr>
+</table>
+
+<!-- ==================== 2. ARCHITECTURE ==================== -->
+<div class="page-break"></div>
+<h1 id="architecture">2. Architecture & How Requests Flow</h1>
+
+<h2>High-Level Architecture</h2>
+<div class="card">
+  <h3>📐 The Layers</h3>
+  <p>The app is built in layers. Each layer has one job:</p>
+  <ol>
+    <li><strong>Frontend (public/ folder)</strong> — HTML + JavaScript pages the user sees in the browser.</li>
+    <li><strong>Routes (routes/ folder)</strong> — Define the URL paths and decide which middleware + controller to call.</li>
+    <li><strong>Middleware (middleware/ folder)</strong> — Security checks that run <em>before</em> the controller.</li>
+    <li><strong>Controllers (controllers/ folder)</strong> — The "brain" that talks to the database and sends back a response.</li>
+    <li><strong>Models (models/ folder)</strong> — Define the shape of data stored in MongoDB.</li>
+  </ol>
+</div>
+
+<h2>How a Request Flows Through the System</h2>
+<div class="flow">
+  <div class="flow-step">🌐 Browser<br><small>User clicks a button</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">🚏 Route<br><small>URL matched</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step mw">🛡️ Middleware<br><small>protect / adminOnly</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step db">🗄️ Controller<br><small>talks to DB</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">📦 Response<br><small>JSON back to browser</small></div>
+</div>
+
+<div class="callout">
+  <div class="label">🔍 What happens at each step</div>
+  <ol>
+    <li><strong>Browser</strong> sends an HTTP request (e.g. <code>GET /api/books</code>).</li>
+    <li><strong>Route</strong> matches the URL and calls the middleware chain.</li>
+    <li><strong>Middleware</strong> checks authentication (is there a valid token?) and authorization (is this user allowed?). If a check fails, it stops the request and returns an error.</li>
+    <li><strong>Controller</strong> performs the actual database operation (find, create, update, delete).</li>
+    <li><strong>Response</strong> is sent back as JSON, which the frontend displays.</li>
+  </ol>
+</div>
+
+<h2>Where the Routes Live</h2>
+<table>
+  <tr><th>URL Prefix</th><th>Route File</th><th>Purpose</th></tr>
+  <tr><td><code>/api/auth</code></td><td><code>routes/authRoutes.js</code></td><td>Register, login, get my profile</td></tr>
+  <tr><td><code>/api/books</code></td><td><code>routes/bookRoutes.js</code></td><td>Browse, search, read, manage books</td></tr>
+  <tr><td><code>/api/borrow</code></td><td><code>routes/borrowRoutes.js</code></td><td>Interest, checkout, status, records</td></tr>
+  <tr><td><code>/api/users</code></td><td><code>routes/userRoutes.js</code></td><td>Admin user management</td></tr>
+</table>
+
+<!-- ==================== 3. MIDDLEWARE ==================== -->
+<div class="page-break"></div>
+<h1 id="middleware">3. Understanding Middleware</h1>
+
+<p>Middleware are functions that run <strong>between</strong> receiving a request and sending a response. They act like <strong>security checkpoints</strong>.</p>
+
+<h2>🛡️ The <code>protect</code> Middleware</h2>
+<div class="card">
+  <h3>What it does</h3>
+  <p>The <code>protect</code> middleware verifies that the request comes from a <strong>logged-in user</strong>. It does this by checking the <strong>JWT (JSON Web Token)</strong> sent in the request header.</p>
+</div>
+
+<h3>Step-by-step: What <code>protect</code> does</h3>
+<div class="flow">
+  <div class="flow-step">📨 Request arrives<br><small>with "Bearer <token>"</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">🔑 Extract token<br><small>from header</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">✅ Verify JWT<br><small>using JWT_SECRET</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">👤 Load user<br><small>from database</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">➡️ next()<br><small>continue to controller</small></div>
+</div>
+
+<div class="callout danger">
+  <div class="label">⛔ When protect fails</div>
+  <ul>
+    <li><strong>No token</strong> → returns <code>401 "Not authorized, no token"</code></li>
+    <li><strong>Invalid/expired token</strong> → returns <code>401 "Not authorized, token failed"</code></li>
+    <li><strong>User no longer exists</strong> → returns <code>401 "User not found"</code></li>
+  </ul>
+</div>
+
+<h3>The actual code</h3>
+<pre><code>const protect = async (req, res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = await User.findById(decoded.id).select('-password');
+      if (!req.user) return res.status(401).json({ message: 'User not found' });
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: 'Not authorized, token failed' });
+    }
+  }
+  if (!token) return res.status(401).json({ message: 'Not authorized, no token' });
+};</code></pre>
+
+<div class="callout success">
+  <div class="label">✅ What protect gives you</div>
+  <p>After <code>protect</code> runs successfully, the controller can access the logged-in user via <code>req.user</code> (e.g. <code>req.user._id</code>, <code>req.user.role</code>).</p>
+</div>
+
+<h2>🔐 The <code>adminOnly</code> Middleware</h2>
+<div class="card">
+  <h3>What it does</h3>
+  <p>The <code>adminOnly</code> middleware checks that the logged-in user has the <strong>admin</strong> role. It must always be used <strong>after</strong> <code>protect</code> (because it needs <code>req.user</code>).</p>
+</div>
+
+<pre><code>const adminOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    return res.status(403).json({ message: 'Access denied: Admin only' });
+  }
+};</code></pre>
+
+<div class="callout warning">
+  <div class="label">⚠️ Important</div>
+  <p><code>adminOnly</code> returns <code>403 "Access denied: Admin only"</code> if the user is not an admin. This is different from <code>401</code> (not logged in) — <code>403</code> means "you are logged in, but you don't have permission".</p>
+</div>
+
+<h2>How Middleware is Combined</h2>
+<p>Middleware can be chained. For example, an admin-only route uses both:</p>
+<pre><code>router.post('/', protect, adminOnly, createBook);</code></pre>
+<div class="flow">
+  <div class="flow-step">📨 Request</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step mw">🛡️ protect<br><small>are you logged in?</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step mw">🔐 adminOnly<br><small>are you an admin?</small></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step db">🗄️ Controller</div>
+</div>
+
+<!-- ==================== 4. DATABASE ==================== -->
+<div class="page-break"></div>
+<h1 id="database">4. The Three Database Collections</h1>
+
+<p>The app uses <strong>MongoDB</strong> (a NoSQL database). Data is stored in <strong>collections</strong> (like tables in a traditional database). There are three collections, defined by the <strong>models</strong>.</p>
+
+<h2>👤 Collection 1: <code>users</code> (Model: User.js)</h2>
+<div class="card">
+  <h3>Stores information about every user</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+    <tr><td><code>name</code></td><td>String</td><td>User's display name</td></tr>
+    <tr><td><code>email</code></td><td>String (unique)</td><td>Login email</td></tr>
+    <tr><td><code>password</code></td><td>String (hashed)</td><td>Password is <strong>hashed</strong> (never stored in plain text)</td></tr>
+    <tr><td><code>role</code></td><td>String</td><td><code>'user'</code> or <code>'admin'</code></td></tr>
+    <tr><td><code>createdAt / updatedAt</code></td><td>Date</td><td>Auto-added timestamps</td></tr>
+  </table>
+</div>
+
+<div class="callout success">
+  <div class="label">🔒 Password Security</div>
+  <p>When a user is created, a <strong>pre-save hook</strong> automatically hashes the password using <code>bcrypt</code>. The plain password is never stored. When logging in, the system compares the entered password against the stored hash.</p>
+</div>
+
+<h2>📖 Collection 2: <code>books</code> (Model: Book.js)</h2>
+<div class="card">
+  <h3>Stores information about each book</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+    <tr><td><code>title</code></td><td>String</td><td>Book title</td></tr>
+    <tr><td><code>author</code></td><td>String</td><td>Book author</td></tr>
+    <tr><td><code>isbn</code></td><td>String (unique)</td><td>Unique ISBN identifier</td></tr>
+    <tr><td><code>totalQty</code></td><td>Number</td><td>Total copies the library owns</td></tr>
+    <tr><td><code>stock</code></td><td>Number</td><td>Currently available copies (defaults to totalQty)</td></tr>
+    <tr><td><code>content</code></td><td>String</td><td>The book's text content (for reading)</td></tr>
+  </table>
+</div>
+
+<div class="callout">
+  <div class="label">💡 totalQty vs stock</div>
+  <p><strong>totalQty</strong> = how many copies the library owns. <strong>stock</strong> = how many are currently available. When someone borrows a book, <code>stock</code> decreases. When they return it, <code>stock</code> increases.</p>
+</div>
+
+<h2>🔁 Collection 3: <code>borrowrecords</code> (Model: BorrowRecord.js)</h2>
+<div class="card">
+  <h3>Tracks the borrowing lifecycle</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+    <tr><td><code>userId</code></td><td>ObjectId (ref: User)</td><td>Which user owns this record</td></tr>
+    <tr><td><code>bookId</code></td><td>ObjectId (ref: Book)</td><td>Which book this record is about</td></tr>
+    <tr><td><code>status</code></td><td>String</td><td><code>interested</code> → <code>pending</code> → <code>borrowed</code> → <code>returned</code></td></tr>
+    <tr><td><code>borrowDate</code></td><td>Date</td><td>When the book was actually borrowed</td></tr>
+    <tr><td><code>returnDate</code></td><td>Date</td><td>When the book was returned</td></tr>
+  </table>
+</div>
+
+<!-- ==================== 5. FEATURES ==================== -->
+<div class="page-break"></div>
+<h1 id="features">5. Every Feature — Step by Step</h1>
+
+<p>Below is every feature in the system. For each one, you'll see the <strong>route</strong>, <strong>who can use it</strong>, <strong>which middleware runs</strong>, and <strong>what database action happens</strong>.</p>
+
+<!-- ===== AUTH FEATURES ===== -->
+<h2>🔑 Authentication Features</h2>
+
+<div class="card">
+  <h3>5.1 Register a New User</h3>
+  <p><span class="tag public">PUBLIC</span> <span class="tag mw">NO MIDDLEWARE</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>POST /api/auth/register</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Anyone (public)</td></tr>
+    <tr><td><strong>Middleware</strong></td><td>None — this is how you <em>get</em> a token</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>User.findOne({ email })</code> to check duplicates, then <code>User.create(...)</code> to create the user (password auto-hashed)</td></tr>
+    <tr><td><strong>Response</strong></td><td>Returns a JWT <code>token</code> + user info</td></tr>
+  </table>
+  <div class="flow">
+    <div class="flow-step">📨 POST /register</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step db">🗄️ Check email exists</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step db">🗄️ Create user</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">🎫 Return token</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>5.2 Login</h3>
+  <p><span class="tag public">PUBLIC</span> <span class="tag mw">NO MIDDLEWARE</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>POST /api/auth/login</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Anyone (public)</td></tr>
+    <tr><td><strong>Middleware</strong></td><td>None</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>User.findOne({ email }).select('+password')</code> to fetch user with password, then <code>user.matchPassword(password)</code> to verify</td></tr>
+    <tr><td><strong>Response</strong></td><td>Returns a JWT <code>token</code> + user info</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.3 Get My Profile</h3>
+  <p><span class="tag private">PRIVATE</span> <span class="tag mw">protect</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/auth/me</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Any logged-in user</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> — verifies the token and loads <code>req.user</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td>None in the controller — <code>req.user</code> was already loaded by <code>protect</code> (which did <code>User.findById</code>)</td></tr>
+    <tr><td><strong>Response</strong></td><td>Returns the logged-in user's profile</td></tr>
+  </table>
+  <div class="flow">
+    <div class="flow-step">📨 GET /me</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step mw">🛡️ protect<br><small>verify token + load user</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">📦 Return profile</div>
+  </div>
+</div>
+
+<!-- ===== BOOK FEATURES ===== -->
+<h2>📖 Book Features</h2>
+
+<div class="card">
+  <h3>5.4 Get All Books</h3>
+  <p><span class="tag public">PUBLIC</span> <span class="tag mw">NO MIDDLEWARE</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/books</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Anyone (public)</td></tr>
+    <tr><td><strong>Middleware</strong></td><td>None</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.find().sort({ createdAt: -1 })</code> — get all books, newest first</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.5 Search Books</h3>
+  <p><span class="tag public">PUBLIC</span> <span class="tag mw">NO MIDDLEWARE</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/books/search?q=keyword</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Anyone (public)</td></tr>
+    <tr><td><strong>Middleware</strong></td><td>None</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.find({ $or: [{ title: regex }, { author: regex }] })</code> — case-insensitive search on title or author</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.6 Get a Single Book</h3>
+  <p><span class="tag public">PUBLIC</span> <span class="tag mw">NO MIDDLEWARE</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/books/:id</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Anyone (public)</td></tr>
+    <tr><td><strong>Middleware</strong></td><td>None</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.findById(req.params.id)</code> — find one book by its ID</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.7 Read Book Content</h3>
+  <p><span class="tag private">PRIVATE</span> <span class="tag mw">protect</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/books/:id/read</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Logged-in user who has <strong>borrowed</strong> the book, OR any admin</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> — must be logged in</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.findById</code> to get the book, then <code>BorrowRecord.findOne({ userId, bookId, status: 'borrowed' })</code> to check the user has an active borrow</td></tr>
+    <tr><td><strong>Access rule</strong></td><td>Admin → always allowed. User → only if they have a <code>borrowed</code> record for this book</td></tr>
+  </table>
+  <div class="flow">
+    <div class="flow-step">📨 GET /:id/read</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step mw">🛡️ protect</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step db">🗄️ Find book</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step db">🗄️ Check borrow record</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">📖 Return content</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>5.8 Create a Book (Admin)</h3>
+  <p><span class="tag admin">ADMIN</span> <span class="tag mw">protect + adminOnly</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>POST /api/books</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin only</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> (logged in) → <code>adminOnly</code> (is admin)</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.findOne({ isbn })</code> to check for duplicate ISBN, then <code>Book.create(...)</code> to create the book</td></tr>
+  </table>
+  <div class="flow">
+    <div class="flow-step">📨 POST /books</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step mw">🛡️ protect</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step mw">🔐 adminOnly</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step db">🗄️ Check ISBN + create</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>5.9 Update a Book (Admin)</h3>
+  <p><span class="tag admin">ADMIN</span> <span class="tag mw">protect + adminOnly</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>PUT /api/books/:id</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin only</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> → <code>adminOnly</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.findById</code> to load, checks ISBN uniqueness, updates fields, then <code>book.save()</code>. If <code>totalQty</code> changes, <code>stock</code> is adjusted by the difference</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.10 Delete a Book (Admin)</h3>
+  <p><span class="tag admin">ADMIN</span> <span class="tag mw">protect + adminOnly</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>DELETE /api/books/:id</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin only</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> → <code>adminOnly</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.findById</code> to load, then <code>book.deleteOne()</code> to remove it</td></tr>
+  </table>
+</div>
+
+<!-- ===== BORROW FEATURES ===== -->
+<h2>🔁 Borrow Features</h2>
+
+<div class="callout">
+  <div class="label">💡 Important</div>
+  <p>All borrow routes use <code>router.use(protect)</code> at the top, which means <strong>every</strong> borrow route requires the user to be logged in. The <code>protect</code> middleware runs automatically for all of them.</p>
+</div>
+
+<div class="card">
+  <h3>5.11 Express Interest in a Book</h3>
+  <p><span class="tag private">PRIVATE</span> <span class="tag mw">protect</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>POST /api/borrow/interest</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Any logged-in user</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> (via <code>router.use</code>)</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.findById</code> to verify book exists, <code>BorrowRecord.findOne</code> to check for existing active record, then <code>BorrowRecord.create({ status: 'interested' })</code></td></tr>
+    <tr><td><strong>Result</strong></td><td>Creates a record with status <code>interested</code> (like a wishlist)</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.12 Request Checkout (Borrow)</h3>
+  <p><span class="tag private">PRIVATE</span> <span class="tag mw">protect</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>POST /api/borrow/checkout</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Any logged-in user</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>Book.findById</code> to verify book + check <code>stock > 0</code>, then either <code>record.save()</code> (upgrade existing interested/pending record to <code>pending</code>) or <code>BorrowRecord.create({ status: 'pending' })</code></td></tr>
+    <tr><td><strong>Result</strong></td><td>Creates/upgrades a record to status <code>pending</code> (request submitted)</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.13 Update Borrow Status</h3>
+  <p><span class="tag private">PRIVATE</span> <span class="tag mw">protect</span> <span class="tag admin">ADMIN OR OWNER</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>PUT /api/borrow/status/:id</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin (any record) OR the record owner (their own record)</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> — then the controller checks ownership</td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>BorrowRecord.findById</code> to load, checks permission (admin or owner), validates the status transition, then <code>Book.findById</code> to adjust <code>stock</code>, then <code>book.save()</code> + <code>record.save()</code></td></tr>
+    <tr><td><strong>Stock effect</strong></td><td>→ <code>borrowed</code>: <code>stock -= 1</code> and sets <code>borrowDate</code>. → <code>returned</code>: <code>stock += 1</code> and sets <code>returnDate</code></td></tr>
+  </table>
+  <div class="flow">
+    <div class="flow-step">📨 PUT /status/:id</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step mw">🛡️ protect</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">👤 Is admin or owner?</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step db">🗄️ Update stock + record</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>5.14 Get My Borrow Records</h3>
+  <p><span class="tag private">PRIVATE</span> <span class="tag mw">protect</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/borrow/my-records</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Any logged-in user</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>BorrowRecord.find({ userId: req.user._id }).populate('bookId', ...)</code> — find the user's records and fill in book details</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.15 Get All Borrow Records (Admin)</h3>
+  <p><span class="tag admin">ADMIN</span> <span class="tag mw">protect + adminOnly</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/borrow/all</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin only</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> (via <code>router.use</code>) → <code>adminOnly</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>BorrowRecord.find().populate('userId').populate('bookId')</code> — get all records with user and book details</td></tr>
+  </table>
+</div>
+
+<!-- ===== USER MANAGEMENT ===== -->
+<h2>👥 User Management (Admin)</h2>
+
+<div class="callout">
+  <div class="label">💡 Important</div>
+  <p>All user management routes use <code>router.use(protect, adminOnly)</code> at the top, so <strong>every</strong> route requires the user to be both logged in <strong>and</strong> an admin.</p>
+</div>
+
+<div class="card">
+  <h3>5.16 Get All Users (Admin)</h3>
+  <p><span class="tag admin">ADMIN</span> <span class="tag mw">protect + adminOnly</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>GET /api/users</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin only</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> → <code>adminOnly</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>User.find().select('-password')</code> — get all users (without passwords)</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.17 Create a User (Admin)</h3>
+  <p><span class="tag admin">ADMIN</span> <span class="tag mw">protect + adminOnly</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>POST /api/users</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin only</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> → <code>adminOnly</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>User.findOne({ email })</code> to check duplicates, then <code>User.create(...)</code> (password auto-hashed). Admin can set the role to <code>admin</code> or <code>user</code></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>5.18 Delete a User (Admin)</h3>
+  <p><span class="tag admin">ADMIN</span> <span class="tag mw">protect + adminOnly</span></p>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td><strong>Route</strong></td><td><code>DELETE /api/users/:id</code></td></tr>
+    <tr><td><strong>Who</strong></td><td>Admin only</td></tr>
+    <tr><td><strong>Middleware</strong></td><td><code>protect</code> → <code>adminOnly</code></td></tr>
+    <tr><td><strong>Database action</strong></td><td><code>User.findById</code> to load, prevents deleting self, then <code>BorrowRecord.deleteMany({ userId })</code> to remove the user's borrow records, then <code>user.deleteOne()</code></td></tr>
+  </table>
+</div>
+
+<!-- ==================== 6. BORROW LIFECYCLE ==================== -->
+<div class="page-break"></div>
+<h1 id="borrow-lifecycle">6. The Borrow Lifecycle (State Machine)</h1>
+
+<p>A borrow record moves through <strong>four states</strong>. Each state represents a stage in the borrowing process. Not every transition is allowed — the system enforces a strict order.</p>
+
+<h2>The State Machine Diagram</h2>
+<div class="state-machine">
+  <div class="state initial">INTERESTED<br><small>Wishlist</small></div>
+  <div class="state-arrow">→</div>
+  <div class="state">PENDING<br><small>Request submitted</small></div>
+  <div class="state-arrow">→</div>
+  <div class="state">BORROWED<br><small>Book in hand</small></div>
+  <div class="state-arrow">→</div>
+  <div class="state final">RETURNED<br><small>Book returned</small></div>
+</div>
+
+<h2>Allowed Transitions</h2>
+<table>
+  <tr><th>From</th><th>Can go to</th><th>What happens</th></tr>
+  <tr><td><code>interested</code></td><td><code>pending</code></td><td>User requests checkout</td></tr>
+  <tr><td><code>pending</code></td><td><code>borrowed</code> or <code>returned</code></td><td>Borrowing: <code>stock -= 1</code>, sets <code>borrowDate</code>. Returning: <code>stock += 1</code>, sets <code>returnDate</code></td></tr>
+  <tr><td><code>borrowed</code></td><td><code>returned</code></td><td>Returning: <code>stock += 1</code>, sets <code>returnDate</code></td></tr>
+  <tr><td><code>returned</code></td><td>(none)</td><td>Final state — cannot change</td></tr>
+</table>
+
+<div class="callout warning">
+  <div class="label">⚠️ Invalid transitions are rejected</div>
+  <p>For example, you cannot go from <code>interested</code> directly to <code>borrowed</code>, or from <code>returned</code> back to <code>pending</code>. The system returns a <code>400</code> error: <em>"Invalid transition from 'X' to 'Y'"</em>.</p>
+</div>
+
+<h2>How Stock Changes Through the Lifecycle</h2>
+<div class="card">
+  <h3>📊 Stock tracking</h3>
+  <ul>
+    <li><strong>interested / pending</strong> → stock is <strong>unchanged</strong> (no book taken yet)</li>
+    <li><strong>borrowed</strong> → <code>stock -= 1</code> (one copy is now out)</li>
+    <li><strong>returned</strong> → <code>stock += 1</code> (the copy comes back)</li>
+  </ul>
+  <p>Example: A book has <code>totalQty = 3</code> and <code>stock = 3</code>. When someone borrows it, <code>stock</code> becomes <code>2</code>. When they return it, <code>stock</code> goes back to <code>3</code>.</p>
+</div>
+
+<!-- ==================== 7. SUMMARY ==================== -->
+<div class="page-break"></div>
+<h1 id="summary">7. Quick Reference Summary Table</h1>
+
+<p>Here is every route in one table, showing who can access it and what middleware runs.</p>
+
+<h2>Auth Routes</h2>
+<table>
+  <tr><th>Method & Path</th><th>Access</th><th>Middleware</th><th>DB Action</th></tr>
+  <tr><td><code>POST /api/auth/register</code></td><td>Public</td><td>—</td><td>Create user</td></tr>
+  <tr><td><code>POST /api/auth/login</code></td><td>Public</td><td>—</td><td>Find + verify user</td></tr>
+  <tr><td><code>GET /api/auth/me</code></td><td>Private</td><td><code>protect</code></td><td>None (uses req.user)</td></tr>
+</table>
+
+<h2>Book Routes</h2>
+<table>
+  <tr><th>Method & Path</th><th>Access</th><th>Middleware</th><th>DB Action</th></tr>
+  <tr><td><code>GET /api/books</code></td><td>Public</td><td>—</td><td>Find all books</td></tr>
+  <tr><td><code>GET /api/books/search</code></td><td>Public</td><td>—</td><td>Find by title/author</td></tr>
+  <tr><td><code>GET /api/books/:id</code></td><td>Public</td><td>—</td><td>Find one book</td></tr>
+  <tr><td><code>GET /api/books/:id/read</code></td><td>Private</td><td><code>protect</code></td><td>Find book + check borrow</td></tr>
+  <tr><td><code>POST /api/books</code></td><td>Admin</td><td><code>protect</code> + <code>adminOnly</code></td><td>Create book</td></tr>
+  <tr><td><code>PUT /api/books/:id</code></td><td>Admin</td><td><code>protect</code> + <code>adminOnly</code></td><td>Update book</td></tr>
+  <tr><td><code>DELETE /api/books/:id</code></td><td>Admin</td><td><code>protect</code> + <code>adminOnly</code></td><td>Delete book</td></tr>
+</table>
+
+<h2>Borrow Routes (all require <code>protect</code>)</h2>
+<table>
+  <tr><th>Method & Path</th><th>Access</th><th>Middleware</th><th>DB Action</th></tr>
+  <tr><td><code>POST /api/borrow/interest</code></td><td>Private</td><td><code>protect</code></td><td>Create interested record</td></tr>
+  <tr><td><code>POST /api/borrow/checkout</code></td><td>Private</td><td><code>protect</code></td><td>Create/upgrade to pending</td></tr>
+  <tr><td><code>PUT /api/borrow/status/:id</code></td><td>Private (admin or owner)</td><td><code>protect</code></td><td>Update status + stock</td></tr>
+  <tr><td><code>GET /api/borrow/my-records</code></td><td>Private</td><td><code>protect</code></td><td>Find user's records</td></tr>
+  <tr><td><code>GET /api/borrow/all</code></td><td>Admin</td><td><code>protect</code> + <code>adminOnly</code></td><td>Find all records</td></tr>
+</table>
+
+<h2>User Management Routes (all require <code>protect</code> + <code>adminOnly</code>)</h2>
+<table>
+  <tr><th>Method & Path</th><th>Access</th><th>Middleware</th><th>DB Action</th></tr>
+  <tr><td><code>GET /api/users</code></td><td>Admin</td><td><code>protect</code> + <code>adminOnly</code></td><td>Find all users</td></tr>
+  <tr><td><code>POST /api/users</code></td><td>Admin</td><td><code>protect</code> + <code>adminOnly</code></td><td>Create user</td></tr>
+  <tr><td><code>DELETE /api/users/:id</code></td><td>Admin</td><td><code>protect</code> + <code>adminOnly</code></td><td>Delete user + records</td></tr>
+</table>
+
+<!-- ==================== 8. GLOSSARY ==================== -->
+<div class="page-break"></div>
+<h1 id="glossary">8. Glossary of Terms</h1>
+
+<table>
+  <tr><th>Term</th><th>Meaning</th></tr>
+  <tr><td><strong>API</strong></td><td>Application Programming Interface — a way for software to talk to each other over HTTP</td></tr>
+  <tr><td><strong>Route</strong></td><td>A URL path (e.g. <code>/api/books</code>) that maps to a handler</td></tr>
+  <tr><td><strong>Middleware</strong></td><td>A function that runs between the request and the response, often for security checks</td></tr>
+  <tr><td><strong>Controller</strong></td><td>The function that handles the request and talks to the database</td></tr>
+  <tr><td><strong>Model</strong></td><td>Defines the structure of data stored in MongoDB</td></tr>
+  <tr><td><strong>JWT (JSON Web Token)</strong></td><td>A secure token that proves a user is logged in. Sent in the <code>Authorization</code> header as <code>Bearer <token></code></td></tr>
+  <tr><td><strong>protect</strong></td><td>Middleware that verifies the JWT and loads the logged-in user into <code>req.user</code></td></tr>
+  <tr><td><strong>adminOnly</strong></td><td>Middleware that checks the user has the <code>admin</code> role</td></tr>
+  <tr><td><strong>req.user</strong></td><td>The logged-in user object, attached by the <code>protect</code> middleware</td></tr>
+  <tr><td><strong>MongoDB</strong></td><td>A NoSQL database that stores data in flexible documents</td></tr>
+  <tr><td><strong>Collection</strong></td><td>A group of documents in MongoDB (like a table)</td></tr>
+  <tr><td><strong>Document</strong></td><td>A single record in a collection (like a row)</td></tr>
+  <tr><td><strong>Schema</strong></td><td>The structure/definition of a document in a collection</td></tr>
+  <tr><td><strong>bcrypt</strong></td><td>A library that hashes passwords so they are never stored in plain text</td></tr>
+  <tr><td><strong>populate</strong></td><td>A Mongoose feature that fills in referenced data (e.g. show book details in a borrow record)</td></tr>
+  <tr><td><strong>HTTP Status 401</strong></td><td>Unauthorized — you are not logged in or your token is invalid</td></tr>
+  <tr><td><strong>HTTP Status 403</strong></td><td>Forbidden — you are logged in but don't have permission</td></tr>
+  <tr><td><strong>HTTP Status 404</strong></td><td>Not Found — the resource doesn't exist</td></tr>
+  <tr><td><strong>HTTP Status 400</strong></td><td>Bad Request — the request is invalid (e.g. invalid status transition)</td></tr>
+</table>
+
+<div class="callout success">
+  <div class="label">🎉 You're all set!</div>
+  <p>You now understand how the Smart Book System works behind the scenes — from routes and middleware to controllers and database actions. Happy coding!</p>
+</div>
+
+</div>
+</body>
+</html>
