@@ -8,82 +8,84 @@ This guide covers the exact steps each presenter should follow during the 5-minu
 ## Part 1: Team Leader Demo (Slides 1–10)
 **Duration:** 5 minutes
 
-### Step 1: Open the Application
+### Step 1: Open the Application and Show Overview
 - **Action:** Open browser and go to `http://localhost:5000`
-- **Expected:** Book Gallery page loads with the navbar and book cards
-- **Feature demonstrated:** System is running and accessible
+- **Expected:** Book Gallery page loads with the navbar, search bar, and book cards
+- **Feature demonstrated:** System is running and accessible (`app.js`, `public/index.html`)
 
-### Step 2: Show the Book Gallery (Member 5’s Feature)
-- **Action:** Scroll through the book grid. Point out the search bar at the top.
-- **Action:** Type "Harry" in the search box.
-- **Expected:** The list filters to show only books matching "Harry" in the title or author.
-- **Action:** Clear the search box.
-- **Expected:** All books reappear.
-- **Feature demonstrated:** Real-time book search (`public/index.html`, `controllers/bookController.js`, `models/Book.js`)
+### Step 2: Show the Technology Stack
+- **Action:** Return to the slides and show the architecture diagram.
+- **Key points to mention:**
+  - Frontend: HTML, CSS, and JavaScript in the `public/` folder
+  - Backend: Node.js and Express in `app.js` and `routes/`
+  - Database: MongoDB with Mongoose models in `models/`
+  - Security: JWT tokens and bcrypt password hashing
+- **Feature demonstrated:** Full-stack architecture (`app.js`, `config/db.js`, `middleware/`)
 
-### Step 3: Show Stock Status
-- **Action:** Look at the colored badges under each book.
-- **Expected:** Green = In Stock, Yellow = Low Stock, Red = Out of Stock.
-- **Feature demonstrated:** Live stock tracking in `Book.js` and `bookController.js`
+### Step 3: Show Database Connection and Seeding
+- **Action:** Show the terminal running the server.
+- **Expected:** You see `MongoDB Connected: 127.0.0.1` or `MongoDB Connected: localhost`
+- **Action:** Mention that the database was initialized with `npm run seed`.
+- **Expected:** 12 demo books and 1 admin account exist in MongoDB.
+- **Feature demonstrated:** Database setup (`config/db.js`, `seed.js`)
 
-### Step 4: Demonstrate Admin Login (Member 1’s Feature)
+### Step 4: Demonstrate Admin Login and Session Management
 - **Action:** Click the **Login** button in the navbar (or go to `/login.html`).
 - **Action:** Enter email: `admin@smartbook.com` and password: `admin123`.
 - **Action:** Click **Login**.
 - **Expected:** You are redirected to the Admin Console (`/admin.html`).
-- **Feature demonstrated:** JWT authentication (`public/login.html`, `controllers/authController.js`, `models/User.js`)
+- **Action:** Refresh the page.
+- **Expected:** You stay logged in (session persists).
+- **Feature demonstrated:** JWT authentication and session handling (`public/login.html`, `controllers/authController.js`, `models/User.js`)
 
-### Step 5: Show Admin Console (Member 4’s Feature)
-- **Action:** On the Admin Console, scroll down to the **Manage Books** section.
-- **Action:** Click **+ Add Book**.
-- **Action:** Fill in the form:
-  - Title: `Demo Book`
-  - Author: `Team Demo`
-  - ISBN: `DEMO-001`
-  - Total Quantity: `5`
-- **Action:** Click **Save**.
-- **Expected:** The new book appears in the books table.
-- **Feature demonstrated:** Admin book creation (`public/admin.html`, `controllers/bookController.js`, `models/Book.js`)
+### Step 5: Show Admin Console Overview
+- **Action:** On the Admin Console, show the three management sections without modifying data:
+  - **Manage Books** — scroll through the books table
+  - **Manage Users** — scroll through the users table
+  - **All Borrow Records** — scroll through the borrow records table
+- **Expected:** All tables show seeded data (12 books, 1 admin user, borrow records if any).
+- **Feature demonstrated:** Admin dashboard (`public/admin.html`)
 
-### Step 6: Show User Management
-- **Action:** Scroll down to the **Manage Users** section in the Admin Console.
+### Step 6: Demonstrate Error Handling and Protected Routes
+- **Action:** Open an incognito window and go to `http://localhost:5000/admin.html`.
+- **Expected:** You are redirected to the login page because you are not authenticated.
+- **Action:** Try to access a protected API directly: `http://localhost:5000/api/users`
+- **Expected:** You see a JSON error: `"Not authorized to access this route"`
+- **Feature demonstrated:** Route protection (`middleware/authMiddleware.js`, `middleware/roleMiddleware.js`)
+
+### Step 7: Show User Management
+- **Action:** In the Admin Console, go to the **Manage Users** section.
 - **Action:** Click **+ Add User**.
-- **Action:** Fill in the form:
+- **Action:** Fill in:
   - Name: `Demo User`
   - Email: `demo@test.com`
   - Password: `demo123`
   - Role: `user`
 - **Action:** Click **Create User**.
 - **Expected:** The new user appears in the users table.
-- **Feature demonstrated:** Admin user management (`controllers/userController.js`, `models/User.js`)
+- **Feature demonstrated:** Admin user creation (`controllers/userController.js`, `models/User.js`)
 
-### Step 7: Show Borrow Records
-- **Action:** Scroll down to the **All Borrow Records** section.
-- **Expected:** A table showing all borrowing activity in the system (may be empty if no borrows yet).
-- **Feature demonstrated:** Admin oversight of borrow records (`controllers/borrowController.js`, `models/BorrowRecord.js`)
+### Step 8: Show Borrow Records Oversight
+- **Action:** Scroll down to the **All Borrow Records** section in the Admin Console.
+- **Expected:** A table showing all borrowing activity across all users.
+- **Action:** Point out the status column and explain the state machine: `interested` → `pending` → `borrowed` → `returned`.
+- **Feature demonstrated:** Admin oversight of borrow activity (`controllers/borrowController.js`, `models/BorrowRecord.js`)
 
-### Step 8: Log Out and Show Error Handling
+### Step 9: Logout and Protected Route Verification
 - **Action:** Click the **Logout** button in the navbar.
 - **Expected:** You are returned to the Book Gallery and the login button reappears.
-- **Feature demonstrated:** Session termination and protected route access
+- **Action:** Try to access `http://localhost:5000/admin.html` again.
+- **Expected:** You are redirected to login because the session was destroyed.
+- **Feature demonstrated:** Session termination and protected route access (`middleware/authMiddleware.js`)
 
-### Step 9: Show the Reader Page (Member 5’s Feature)
-- **Action:** As a regular user, borrow any book first (see Member 3’s demo for steps), then click **Read** on the borrowed book.
-- **Action:** If you cannot borrow as admin, open an incognito window, register a new user, borrow a book, and click **Read**.
-- **Expected:** The Reader page opens showing the book content.
-- **Action:** Click **Back to My Account**.
-- **Expected:** You return to the member dashboard.
-- **Feature demonstrated:** Online book reader (`public/reader.html`, `controllers/bookController.js`, `models/Book.js`)
-
-### Step 10: Show System Architecture Summary
-- **Action:** Return to the slides and summarize.
+### Step 10: Show Deployment and GitHub Workflow
+- **Action:** Return to the slides and show the GitHub repository and branch structure.
 - **Key points to mention:**
-  - Frontend: HTML/CSS/JS pages in `public/`
-  - Backend: Express routes in `routes/`, controllers in `controllers/`
-  - Database: Mongoose models in `models/`
-  - Security: JWT + bcrypt in `middleware/` and `models/User.js`
-  - Deployment: GitHub + Render/Vercel
-- **Feature demonstrated:** Full-stack MVC architecture (`app.js`, `config/db.js`, `middleware/`)
+  - Repository: `https://github.com/lapjai-debug/smart-book-system`
+  - Branch strategy: `main` (protected) and `development` (integration)
+  - Workflow: feature branch → commit → push → pull request → code review → merge
+  - Free deployment: Render or Vercel auto-deploy from GitHub
+- **Feature demonstrated:** Team collaboration and DevOps workflow
 
 ---
 
@@ -110,24 +112,7 @@ This guide covers the exact steps each presenter should follow during the 5-minu
   - Red badge with "Out of Stock" for books with 0 copies
 - **Feature demonstrated:** Stock status logic (`models/Book.js` → `stock` field, `public/js/books.js`)
 
-### Step 4: Borrow a Book (requires login)
-- **Action:** Log in as a regular user (or register a new account via `/login.html`).
-- **Action:** Go back to the Book Gallery.
-- **Action:** Click **Interested** on any available book.
-- **Expected:** Toast message "Added to wishlist!" appears.
-- **Action:** Click **Checkout** on the same book.
-- **Expected:** Toast message "Checkout request submitted!" appears, and stock decreases by 1.
-- **Feature demonstrated:** Borrow workflow integration (`controllers/borrowController.js`, `models/BorrowRecord.js`, `public/js/borrow.js`)
-
-### Step 5: Read the Borrowed Book
-- **Action:** Navigate to **My Account** (`/member.html`).
-- **Action:** Find the borrowed book in **My Borrow Records** and click **Read**.
-- **Expected:** The Reader page opens with the book title, author, and full text content.
-- **Action:** Click **Back to My Account**.
-- **Expected:** You return to the member dashboard.
-- **Feature demonstrated:** Book reader access control (`public/reader.html`, `controllers/bookController.js` → `getBookContent`, `models/Book.js` → `content`)
-
-### Step 6: Show Admin Book Management
+### Step 4: Add a New Book as Admin
 - **Action:** Log in as admin (`admin@smartbook.com` / `admin123`).
 - **Action:** Go to **Admin Console** (`/admin.html`).
 - **Action:** In the **Manage Books** section, click **+ Add Book**.
@@ -138,13 +123,31 @@ This guide covers the exact steps each presenter should follow during the 5-minu
   - Total Quantity: `3`
 - **Action:** Click **Save**.
 - **Expected:** The new book appears in the books table with stock = 3.
-- **Feature demonstrated:** Admin book CRUD (`public/admin.html`, `controllers/bookController.js`, `models/Book.js`)
+- **Feature demonstrated:** Admin book creation (`public/admin.html`, `controllers/bookController.js`, `models/Book.js`)
 
-### Step 7: Show Book Deletion
+### Step 5: Edit Book Stock
+- **Action:** In the Admin Console books table, find the demo book you just created.
+- **Action:** Click **Edit** in the Actions column.
+- **Action:** Change the Total Quantity to `5`.
+- **Action:** Click **Save**.
+- **Expected:** The book updates to show Total Quantity = 5 and Stock adjusts accordingly.
+- **Feature demonstrated:** Book update with stock validation (`controllers/bookController.js` → `updateBook`, `models/Book.js`)
+
+### Step 6: Delete a Book
 - **Action:** In the Admin Console books table, find the demo book you just created.
 - **Action:** Click **Delete** in the Actions column.
 - **Expected:** Confirmation dialog appears. After confirming, the book is removed from the table and the gallery.
 - **Feature demonstrated:** Book deletion (`controllers/bookController.js` → `deleteBook`)
+
+### Step 7: Show the Book Reader
+- **Action:** Log in as a regular user (or use an incognito window to register a new user).
+- **Action:** Go to the Book Gallery and borrow any available book (click Interested, then Checkout).
+- **Action:** Go to **My Account** (`/member.html`).
+- **Action:** Find the borrowed book in **My Borrow Records** and click **Read**.
+- **Expected:** The Reader page opens showing the book title, author, and full text content.
+- **Action:** Click **Back to My Account**.
+- **Expected:** You return to the member dashboard.
+- **Feature demonstrated:** Book reader access control (`public/reader.html`, `controllers/bookController.js` → `getBookContent`, `models/Book.js` → `content`)
 
 ---
 
@@ -177,44 +180,23 @@ This guide covers the exact steps each presenter should follow during the 5-minu
 - **Expected:** The book moves from Wishlist to **My Borrow Records** with status "pending".
 - **Feature demonstrated:** Checkout request (`controllers/borrowController.js` → `checkout`, status: `pending`)
 
-### Step 5: Approve Borrow (Admin Action)
-- **Action:** Log in as admin in another tab or incognito window.
-- **Action:** Go to **Admin Console** (`/admin.html`).
-- **Action:** Scroll to **All Borrow Records**.
-- **Expected:** You see the pending request from the regular user.
-- **Action:** Find the action button for that record and approve it (change status to "borrowed").
-- **Expected:** The record status changes to "borrowed", and the book stock decreases by 1.
-- **Feature demonstrated:** Borrow approval and stock decrement (`controllers/borrowController.js` → `updateStatus`, `models/Book.js` → `stock`)
+### Step 5: Show Borrow History and State Machine
+- **Action:** In **My Borrow Records**, look at the status badges.
+- **Expected:** The borrowed book shows "pending" status.
+- **Action:** Explain the four states: interested → pending → borrowed → returned.
+- **Action:** Attempt to checkout the same book again.
+- **Expected:** Error toast prevents duplicate active records.
+- **Feature demonstrated:** State machine and duplicate prevention (`controllers/borrowController.js` → `validTransitions`, `models/BorrowRecord.js` compound index)
 
 ### Step 6: Return the Book
 - **Action:** As the regular user, go back to **My Account** (`/member.html`).
 - **Action:** In **My Borrow Records**, find the borrowed book.
-- **Expected:** The book shows status "borrowed" with a **Return** button.
+- **Expected:** The book shows status "borrowed" with a **Return** button (after admin approval).
 - **Action:** Click **Return**.
 - **Expected:** Toast notification confirms the return. The status changes to "returned".
-- **Expected:** The book stock increases by 1 back in the Admin Console.
-- **Feature demonstrated:** Return workflow and stock increment (`controllers/borrowController.js` → `updateStatus`, `models/BorrowRecord.js` → status: `returned`)
+- **Feature demonstrated:** Return workflow (`controllers/borrowController.js` → `updateStatus`, `models/BorrowRecord.js` → status: `returned`)
 
-### Step 7: Show State Machine
-- **Action:** In the Admin Console borrow records table, point out the status column.
-- **Expected:** Show the progression: `interested` → `pending` → `borrowed` → `returned`.
-- **Action:** Attempt an invalid transition if possible (e.g., try to return a book that is still "interested").
-- **Expected:** The system rejects the invalid transition with a clear error message.
-- **Feature demonstrated:** Borrow state machine validation (`controllers/borrowController.js` → `validTransitions`, `models/BorrowRecord.js` → `status` enum)
-
-### Step 8: Prevent Duplicate Requests
-- **Action:** As a regular user, try to click **Interested** on the same book again.
-- **Expected:** Error toast: "You already have this book in status: returned" (or current status).
-- **Action:** Try clicking **Checkout** on the same book again.
-- **Expected:** Error toast prevents duplicate active records.
-- **Feature demonstrated:** Duplicate record prevention (`controllers/borrowController.js` → existing record check, `models/BorrowRecord.js` compound index)
-
-### Step 9: Show Borrow History
-- **Action:** In **My Borrow Records**, scroll through the list.
-- **Expected:** All past and current borrows are listed with book details, status badges, and dates.
-- **Feature demonstrated:** Borrow history retrieval (`controllers/borrowController.js` → `getMyRecords`, `models/BorrowRecord.js` → `borrowDate`, `returnDate`)
-
-### Step 10: Summary
+### Step 7: Summary
 - **Action:** Return to slides and summarize.
 - **Key points to mention:**
   - Wishlist saves books for later (`interested` state)
